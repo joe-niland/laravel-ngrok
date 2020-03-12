@@ -16,6 +16,7 @@ class NgrokCommand extends Command
      */
     protected $signature = 'ngrok
                             {host? : The host to share}
+                            {--host-header= : The host header rewrite value for ngrok - can be a hostname or `rewrite`}
                             {--port= : The port to share}';
 
     /**
@@ -59,6 +60,7 @@ class NgrokCommand extends Command
     public function handle() : int
     {
         $host = $this->argument('host');
+        $hostHeader = $this->option('host-header');
         $port = $this->option('port');
 
         if ($host === null) {
@@ -91,11 +93,12 @@ class NgrokCommand extends Command
         $this->line('');
 
         $this->line('<fg=green>Host: </fg=green>' . $host);
+        $this->line('<fg=green>Host Header: </fg=green>' . ($hostHeader ?: 'Not supplied'));
         $this->line('<fg=green>Port: </fg=green>' . $port);
 
         $this->line('');
 
-        $process = $this->processBuilder->buildProcess($host, $port);
+        $process = $this->processBuilder->buildProcess($host, $hostHeader ?: '', $port);
 
         return $this->runProcess($process);
     }

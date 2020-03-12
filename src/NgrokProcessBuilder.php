@@ -48,16 +48,15 @@ class NgrokProcessBuilder
      * @param string $port
      * @return \Symfony\Component\Process\Process
      */
-    public function buildProcess(string $host = '', string $port = '80') : Process
+    public function buildProcess(string $host = '', string $hostHeader = '', string $port = '80') : Process
     {
         $command = ['ngrok', 'http', '--log', 'stdout'];
 
-        if ($host !== '') {
-            $command[] = '--host-header';
-            $command[] = $host;
+        if ($hostHeader !== '') {
+            $command[] = '--host-header=' . $hostHeader;
         }
 
-        $command[] = $port ?: '80';
+        $command[] = ($host !== '' ? sprintf('%s:', $host) : '') . $port ?: '80';
 
         return new Process($command, $this->getWorkingDirectory(), null, null, null);
     }
